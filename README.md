@@ -176,8 +176,111 @@ session.execute(query)
 
 ### Queries
 
+As mentioned earlier we have 3 queries each using a different table made purposedly:
 
+
+#### Query 1: Give me the artist, song title and song's length in the music app history that was heard during sessionId = 338, and itemInSession = 4
+
+
+```python
+
+#commented line give the quality check result with checking parameters
+
+#query_case_1 = "SELECT * FROM sessions "
+query_case_1 = "SELECT artist, song, duration FROM sessions "
+query_case_1 +="WHERE sessionid = 338 AND iteminsession = 4"
+
+
+try:
+    rows = session.execute(query_case_1)
+except Exception as e:
+    print(e)
+    
+for row in rows:
+    #print (row.artist, row.song, row.duration, row.sessionid, row.iteminsession)
+    print (row.artist, row.song, row.duration)
+
+```
+
+#### Query 2:  Give me only the following: name of artist, song (sorted by itemInSession) and user (first and last name) for userid = 10, sessionid = 182
+
+```python
+
+#commented line give the quality check result with checking parameters
+
+#query_case_2 = "SELECT * FROM users "
+query_case_2 = "SELECT artist, song, firstname, lastname FROM users "
+query_case_2 +="WHERE userid = 10 AND sessionid = 182 "
+
+
+try:
+    rows = session.execute(query_case_2)
+except Exception as e:
+    print(e)
+    
+for row in rows:
+    #print (row.artist, row.song, row.firstname, row.lastname, row.userid, row.sessionid, row.iteminsession)
+    print (row.artist, row.song, row.firstname, row.lastname)
+    
+```
+
+#### Query 3: Give me every user name (first and last) in my music app history who listened to the song 'All Hands Against His Own'
+
+```python
+
+#commented line give the quality check result with checking parameters
+
+#query_case_3 = "SELECT * FROM songs "
+query_case_3 = "SELECT firstname, lastname FROM songs "
+query_case_3 +="WHERE song = 'All Hands Against His Own'"
+
+
+try:
+    rows = session.execute(query_case_3)
+except Exception as e:
+    print(e)
+    
+for row in rows:
+    #print (row.song, row.firstname, row.lastname,)
+    print (row.firstname, row.lastname)
+
+```
 
 ## ETL (Extract Transform Load)
 
+For the ETL part, as mentioned a good part of the work with the files as been already done in the Part I of the notebook. Now we just need to read each rows of the single file and insert properly the values within the right placeholder of the table and this individually for the 3 created tables.
+
+Note: 1 inportant aspect is to convert each values coming as string into the expected format
+
+As an example the ingestion code looks for most of the tables as follow:
+
+```python
+
+file = 'event_datafile_new.csv'
+
+with open(file, encoding = 'utf8') as f:
+    csvreader = csv.reader(f)
+    next(csvreader) # skip header
+    for line in csvreader:
+# Assign the INSERT statements into the `query` variable
+        query = "INSERT INTO songs (song, userid, sessionid, firstname, lastname)"
+        query = query + "VALUES (%s, %s, %s, %s, %s)"
+        
+        #Assign which column element should be assigned for each column in the INSERT statement.
+    
+
+        session.execute(query, (line[9], int(line[10]), int(line[8]), line[1], line[4]))
+        #print(type(line[8]), type(line[3]), type(line[0]), type(line[5]), type(line[9]))
+      
+
+```
+
+
 ## Improvement suggestions / Additional work
+
+As seen in the code extracts for the SELECT queries I added some quality control checks where not only the requested fields are retrieved and displayed but all the fields part of the composite key. Simply uncomment the lines to control.
+
+- A direct imporvement would be to format the results of the queries to be displayed in a more user friendly way such as DataFrame with column headers.
+- Also I believe there are more quality control to be added such as number of rows in the files against rows inserted in each tables.
+- Same goes for making sure each table is consistent and as the same number of rows.
+- One other improvement would be to try to reduce the number of tables to 2, without impacting the performances and delivering the same queries.
