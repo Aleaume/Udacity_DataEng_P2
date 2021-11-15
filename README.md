@@ -122,7 +122,8 @@ except Exception as e:
 
 As discussed earlier we will go ahead with creating 3 tables with a single query focus for each:
 
-![image](https://user-images.githubusercontent.com/32632731/141685548-3e3f599f-bf5b-435f-8c46-801b833b9e01.png)
+![image](https://user-images.githubusercontent.com/32632731/141739966-c5e15c06-23a1-4634-844b-9b66a8dc8393.png)
+
 
 #### sessions
 
@@ -142,7 +143,7 @@ session.execute(query)
 
 #### users
 
-For the 2nd query we create a table with a focus on users where user id and session id along with iteminsession make a composite key for:
+For the 2nd query we create a table with a focus on users where user id and session id along make a composite key along with iteminsession as clustering key for:
 
 - unique record set
 - easy WHERE clause on userid and sessionid
@@ -151,7 +152,7 @@ For the 2nd query we create a table with a focus on users where user id and sess
 ```python
 
 query = "CREATE TABLE IF NOT EXISTS users "
-query = query + "(userid int, sessionid int, iteminsession int, artist text, song text, firstname text, lastname text, PRIMARY KEY (userid, sessionid, iteminsession))"
+query = query + "(userid int, sessionid int, iteminsession int, artist text, song text, firstname text, lastname text, PRIMARY KEY ((userid, sessionid), iteminsession))"
 
 session.execute(query)
 
@@ -159,15 +160,15 @@ session.execute(query)
 
 #### songs
 
-For the last query we create a table with a focus on songs where song of course but also userid and sessionid consitute a composite key, this gives:
+For the last query we create a table with a focus on songs where song of course but also userid consitute a composite key, this gives:
 
 - an effective way to use WHERE clause song
-- and also making sure the record is unique with the other 2 parameters
+- and also making sure the record is unique with the other parameter userid
 
 ```python
 
 query = "CREATE TABLE IF NOT EXISTS songs "
-query = query + "(song text, userid int, sessionid int, firstname text, lastname text, PRIMARY KEY (song, userid, sessionid))"
+query = query + "(song text, userid int, sessionid int, firstname text, lastname text, PRIMARY KEY (song, userid))"
 
 session.execute(query)
                     
