@@ -280,8 +280,9 @@ with open(file, encoding = 'utf8') as f:
 ## Improvement suggestions / Additional work
 
 As seen in the code extracts for the SELECT queries I added some quality control checks where not only the requested fields are retrieved and displayed but all the fields part of the composite key. Simply uncomment the lines to control.
+Edit Submit #2: A direct imporvement done was to format the results of the queries to be displayed in a more user friendly way such as DataFrame with column headers.
 
-- A direct imporvement would be to format the results of the queries to be displayed in a more user friendly way such as DataFrame with column headers.
+
 - Also I believe there are more quality control to be added such as number of rows in the files against rows inserted in each tables.
 - Same goes for making sure each table is consistent and as the same number of rows.
 - One other improvement would be to try to reduce the number of tables to 2, without impacting the performances and delivering the same queries.
